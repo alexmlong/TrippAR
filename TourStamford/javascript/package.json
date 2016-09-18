@@ -1,0 +1,12 @@
+{
+  "version": "2.0.0",
+  "description": "Blippar JS test application",
+  "main": "main.js",
+  "blipp": {
+    "title": "My first blipp",
+    "shortTitle": "1st blipp"
+  },
+  "dependencies": {
+    "blippar": "1.2.32"
+  }
+}
