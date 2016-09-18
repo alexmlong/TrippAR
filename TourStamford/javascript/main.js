@@ -1,5 +1,24 @@
 try {
     var blipp = require('blippar').blipp;
+
+    var blippInfoVariations = {
+        sic: {
+            title: "Stamford Innovation Center",
+            description: "The original purpose of this building was to house the office of the mayor, city officials, the police station, courthouse, and even a horse stable. After World War II though, this building simply could not accommodate the increasing demand for municipal services and offices in the growing City of Stamford. In 2008, the city of Stamford began a program to restore the building and put it into good use. The Stamford Innovation Center and our community are the fortunate recipients of the hard work of OTHRA and the City of Stamford and we appreciate, love and leverage this remarkable building almost every day."
+          },
+        lou: {
+            title: "Former Mayor Louis Clapes",
+            description: "In 1963, Louis Clapes was elected Town Clerk and remained in that job until 1975, when he defeated the Democratic incumbent Mayor. As Mayor, Mr. Clapes worked to weed out corruption and increase professionalism. He was elected Mayor in 1975 and remained in that post until his retirement in 1983. It was a period of revival for the city, which attracted corporations and thousands of employees from New Haven and New York.  According to his granddaughter, Mr. Clapes was known for his signature whistle. 'Residents learned to listen for Lou’s whistling that proceeded him as he walked on his way. To many, it signaled the mayor was on his way.' According to local historian and friend, Don Russell, 'he was the people’s mayor for sure.'"
+          },
+        lincoln: {
+            title: "Abraham Lincoln and Veteran's Park",
+            description: "Stamford honors its veterans with a collection of monuments in a downtown plaza dedicated in 1977.  Veterans Park, near the intersection of Main and Atlantic streets, features a bronze Doughboy figure, several large granite slabs, a statue of Abraham Lincoln, and a monument honoring the founders of Stamford.  At the eastern end of the park, a granite 'In Memoriam' monument lists, arranged by service branch, Stamford residents killed in World War II, Korea and Vietnam. More than 200 names are listed in the World War II section. Sixteen names are listed for the Korean War, and 26 heroes are listed for Vietnam.  'Let us, the living, be here dedicated to the great task remaining before us — that from these honored dead we take increased devotion to that cause for which they gave their last full measure of devotion.' - Abraham Lincoln."
+          },
+        hackathon: {
+            title: "Stamford Hackathon!!!",
+            description: "Thank you to Hugh, everyone else to made this hackathon so awesome, and of course, our sponsors! Thank you Pitney Bowes, Uber, Blippar, and Scriptr.io!"
+          },
+    };
     blipp.log("Hackathon!!!");
     blipp.log(JSON.stringify({"key": "value"}));
     blipp.log(JSON.parse('{"key": "value"}'));
@@ -14,13 +33,14 @@ try {
     // Scene creation
     scene.onCreate = function() {
 
-        var locationTitle = "Stamford Innovation Center";
+        var locationKey = "sic";
+        var locationTitle = blippInfoVariations[locationKey].title;
         scene.addText(locationTitle)
           .setFontSize(100)
           //.setBgColor([1, 1, 1, .5])
           .setTranslationY(450);
 
-        var locationInfo = "The original purpose of this building was to house the office of the mayor, city officials, the police station, courthouse, and even a horse stable. After World War II though, this building simply could not accommodate the increasing demand for municipal services and offices in the growing City of Stamford. In 2008, the city of Stamford began a program to restore the building and put it into good use. The Stamford Innovation Center and our community are the fortunate recipients of the hard work of OTHRA and the City of Stamford and we appreciate, love and leverage this remarkable building almost every day.";
+        var locationInfo = blippInfoVariations[locationKey].description;
 
         scene.addText(locationInfo)
           .setFontSize(40)
@@ -91,11 +111,14 @@ try {
                         var poiText = scene.addText(poiName + " - " + poiUberCost)
                           .setFontSize(75)
                           .setBgColor([1, 1, 1, .5])
-                          .setTranslationX(1000)
+                          .setTranslationX(800 + (10 * poiName.length))
                           .setTranslationY(250 - (i * 100));
 
                         poiText.onTouchEnd = function() {
+                            this.setTranslationX(800);
                             this.setText("Calling your uber...");
+                            blipp.log(poi.uberLink);
+                            blipp.openURL(poi.uberLink);
                         };
                     };
                     //blipp.log(typeof poiResponse);
