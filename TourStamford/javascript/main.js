@@ -1,5 +1,6 @@
 try {
     var blipp = require('blippar').blipp;
+    var blippName = "hackathon";
 
     var blippInfoVariations = {
         sic: {
@@ -16,7 +17,7 @@ try {
           },
         hackathon: {
             title: "Stamford Hackathon!!!",
-            description: "Thank you to Hugh, everyone else to made this hackathon so awesome, and of course, our sponsors! Thank you Pitney Bowes, Uber, Blippar, and Scriptr.io!"
+            description: "Thank you to our awesome sponsors!"
           },
     };
     blipp.log("Hackathon!!!");
@@ -33,34 +34,22 @@ try {
     // Scene creation
     scene.onCreate = function() {
 
-        var locationKey = "sic";
-        var locationTitle = blippInfoVariations[locationKey].title;
-        scene.addText(locationTitle)
-          .setFontSize(100)
-          //.setBgColor([1, 1, 1, .5])
-          .setTranslationY(450);
-
-        var locationInfo = blippInfoVariations[locationKey].description;
-
-        scene.addText(locationInfo)
-          .setFontSize(40)
-          .setBgColor([1, 1, 1, 0.2])
-          .setLayout( {position:[-0.5, 0], size:[.4, 1]} )
-          .setTextMargins([20, 5]);
         //scene.addText(locationInfo)
         //  .setFontSize(30)
         //  .setTextMargins([1, 1])
         //  //.setBgColor([1, 1, 1, .5])
         //  .setTranslationX(-800)
         //  .setTranslationY(300);
-        //var defaultLight    = scene.addLight('light');
-        //var defaultMaterial = scene.addMaterial('material');
+        var defaultLight = 
+            scene.addLight('light')
+                .setIntensity(0.2);
+        var defaultMaterial = scene.addMaterial('material');
 
-        //var logoPane = scene.addSprite()
-        //    .setTexture('logo.png')
-        //    .setScale(mW, mH, 0.7)
-        //    .setLight(defaultLight)
-        //    .setMaterial(defaultMaterial);
+        var logoPane = scene.addSprite()
+            .setTexture('tripparLogo.jpg')
+            .setScale(mW, mH, 0.7)
+            .setLight(defaultLight)
+            .setMaterial(defaultMaterial);
 
         //var poisFile = "pbHistoricLocations.json";
         //scene.addRequiredAssets(poisFile);
@@ -72,86 +61,132 @@ try {
         //  .setTranslationY(400)
         //  .setBgColor([1, 0, 0, 0]);
 
-        //logoPane.onTouchEnd = function() {
+        logoPane.onTouchEnd = function() {
+            this.setHidden(true);
 
-        var geo = blipp.getGeo();
-        var lat = geo.getLat();
-        var lng = geo.getLon();
-        //var url = "https://img.buzzfeed.com/buzzfeed-static/static/2013-10/enhanced/webdr06/15/10/anigif_enhanced-buzz-25498-1381845743-9_preview.gif";
-        var urlUpToFile = "https://api.scriptrapps.io/";
-        var file = "test";
-        var getParams = "lat=" + lat + "&lng=" + lng;
+            var locationTitle = blippInfoVariations[blippName].title;
+            scene.addText(locationTitle)
+              .setFontSize(100)
+              //.setBgColor([1, 1, 1, .5])
+              .setTranslationY(450);
 
-        var url = urlUpToFile + file + "?" + getParams;
-        //var url = "https://192.168.1.70/alert.png";
-        blipp.log('Downloading ' + url + '...')
+            var locationInfo = blippInfoVariations[blippName].description;
 
-        var self = this;
+            if (blippName !== "hackathon") {
+                scene.addText(locationInfo)
+                  .setFontSize(40)
+                  .setBgColor([1, 1, 1, 0.9])
+                  .setLayout( {position:[-0.5, 0], size:[.4, 1]} )
+                  .setTextMargins([20, 5]);
+            } else {
+                var infoText = scene
+                  .addText(locationInfo)
+                  .setFontSize(40)
+                  .setColor(1, 1, 1)
+                  .setBgColor([0, 0, 0, 0.9])
+                  .setLayout( {position:[0, 0], size:[1, 1]} )
+                  .setTextMargins([20, 5]);
+            }
 
-        blipp.log(blipp.downloadAssets.toString());
-        blipp.downloadAssets(
-            url, 
-            [file], 
-            "get",
-            function (status, info) {
-                if (status == 'OK') {
-                    blipp.log('Done!');
+            if (blippName !== "hackathon") {
+                var geo = blipp.getGeo();
+                var lat = geo.getLat();
+                var lng = geo.getLon();
+                //var url = "https://img.buzzfeed.com/buzzfeed-static/static/2013-10/enhanced/webdr06/15/10/anigif_enhanced-buzz-25498-1381845743-9_preview.gif";
+                //var urlUpToFile = "https://stream.watsonplatform.net/text-to-speech/api/v1/synthesize?accept=audio/wav&text=hello%20mundo";
+                
+                var urlUpToFile = "https://api.scriptrapps.io/";
+                var file = "test";
 
-                    var poiResponse = blipp.loadJson(file);
+                var file = "synthesize";
+                var getParams = "lat=" + lat + "&lng=" + lng;
 
-                    blipp.log(JSON.stringify(poiResponse));
-                    var pois = poiResponse.response.result;
+                var url = urlUpToFile + file + "?" + getParams;
+                //var url = "https://archive.org/download/testmp3testfile/mpthreetest.mp3";
+                //file = "mpthreetest.mp3";
+                //var url = "https://192.168.1.70/alert.png";
+                blipp.log('Downloading ' + url + '...')
 
-                    for (var i = 0; i < pois.length; i++) {
-                        var poi = pois[i];
-                        var poiName = poi.name;
-                        blipp.log(poiName);
-                        var poiUberCost = poi.uberCost;
-                        blipp.log(poiUberCost);
-                        var poiText = scene.addText(poiName + " - " + poiUberCost)
-                          .setFontSize(75)
-                          .setBgColor([1, 1, 1, .5])
-                          .setTranslationX(800 + (10 * poiName.length))
-                          .setTranslationY(250 - (i * 100));
+                var self = this;
 
-                        poiText.onTouchEnd = function() {
-                            this.setTranslationX(800);
-                            this.setText("Calling your uber...");
-                            blipp.log(poi.uberLink);
-                            blipp.openURL(poi.uberLink);
-                        };
-                    };
-                    //blipp.log(typeof poiResponse);
-                    //blipp.log(poiResponse.substring(0, 10));
-                    //blipp.log(poiResponse.substring(0, 40));
-                    //var escapedFileContents = 
-                    //    poiResponse.replace(/\\n/g, "\\n")
-                    //      .replace(/\'/g, "")
-                    //      .replace(/\"/g, "")
-                    //      .replace(/\&/g, "")
-                    //      .replace(/\r/g, "")
-                    //      .replace(/\t/g, "")
-                    //      .replace(/\b/g, "")
-                    //      .replace(/\f/g, "");
+                blipp.log(blipp.downloadAssets.toString());
 
-                    //blipp.log(escapedFileContents);
-                    //blipp.log("x" + escapedFileContents + "x");
-                    //blipp.log("x" + escapedFileContents.trim() + "x");
-                    //blipp.log(escapedFileContents.replace(/(\r\n|\n|\r)/gm,""));
-                    //blipp.log("x" + escapedFileContents.replace(/(\r\n|\n|\r)/gm,"") + "x");
-                    //blipp.log("x" + escapedFileContents.replace(/(\r\n|\n|\r)/gm,"").trim() + "x");
-                    //blipp.log(JSON.parse(escapedFileContents.replace(/(\r\n|\n|\r)/gm,"")));
-                    //blipp.log(JSON.parse(escapedFileContents));
-                    //blipp.log(JSON.parse(escapedFileContents).result);
-                    //blipp.log(JSON.parse(poiResponse));
-                } else {
-                    blipp.log('loaded ' + info + '%');
-                }
-              }, 
-              ["Authorization", "bearer QTA2Q0IwMzg4ODpzY3JpcHRyOkM4RTI0MjNEMzIyMDQxNkE2MTM4RTBBQjQ4NkIzNzA3"],
-              true);
-        //};
-     
+                var headers = [
+                    "Authorization", 
+                    "Basic NjZhMGQzNGQtMGVlNy00ZmM3LWJmMTYtZDlhNjIxMTNhN2FkOklOb1NhVW9LeGF1Qw==",
+                ];
+                blipp.downloadAssets(
+                    url, 
+                    [file], 
+                    "get",
+                    function (status, info) {
+                        if (status == 'OK') {
+                            blipp.log('Done!');
+
+                            //blipp.log("Asset status:");
+                            //blipp.log(blipp.getAssetStat(file));
+                            //scene.playSound(file);
+
+                            /*var node = new Blippar.Node();
+                            var assets = node.getAssets();
+                            blipp.log(JSON.stringify(assets));
+
+                            var localFile = "pleasehold.mp3";
+                            scene.addRequiredAssets(localFile);
+                            var temp = blipp.loadData(localFile, false);
+                            blipp.log(temp);
+                            blipp.log(JSON.stringify(temp));
+                            //scene.prepareSound(localFile, 10);
+                            //scene.playSound("", false, 10);
+                            scene.playSound(localFile);*/
+                            
+                            var poiResponse = blipp.loadData(file, false);
+
+                            blipp.log(JSON.stringify(poiResponse));
+                            var pois = poiResponse.response.result;
+
+                            for (var i = 0; i < pois.length; i++) {
+                                var poi = pois[i];
+                                var poiName = poi.name;
+                                blipp.log(poiName);
+                                var poiUberCost = poi.uberCost;
+                                blipp.log(poiUberCost);
+                                var poiText = scene.addText(poiName + " - " + poiUberCost)
+                                  .setFontSize(75)
+                                  .setBgColor([1, 1, 1, .5])
+                                  .setTranslationX(800 + (10 * poiName.length))
+                                  .setTranslationY(250 - (i * 100));
+
+                                poiText.onTouchEnd = function() {
+                                    this.setTranslationX(800);
+                                    this.setText("Calling your uber...");
+                                    blipp.log(poi.uberLink);
+                                    blipp.openURL(poi.uberLink);
+                                };
+                            };
+                        } else {
+                            blipp.log('loaded ' + info + '%');
+                        }
+                      }, 
+                      headers,
+                      true);
+            } else {
+            /*for (var i = 0; i < 3; i++) {
+                scene.addText(poiName + " - " + poiUberCost)
+                  .setFontSize(75)
+                  .setBgColor([1, 1, 1, .5])
+                  .setTranslationX(800 + (10 * poiName.length))
+                  .setTranslationY(250 - (i * 100));
+
+                poiText.onTouchEnd = function() {
+                    this.setTranslationX(800);
+                    this.setText("Calling your uber...");
+                    blipp.log(poi.uberLink);
+                    blipp.openURL(poi.uberLink);
+                };
+            };*/
+            }
+        }
     }
 
     scene.onShow = function() {
