@@ -1,7 +1,11 @@
 try {
     var blipp = require('blippar').blipp;
-    var blippName = "hackathon";
 
+
+
+
+    /* Hack to deal with the fact that you can't share code between blipps. */
+    var blippName = "hackathon";
     var blippInfoVariations = {
         sic: {
             title: "Stamford Innovation Center",
@@ -21,8 +25,6 @@ try {
           },
     };
     blipp.log("Hackathon!!!");
-    blipp.log(JSON.stringify({"key": "value"}));
-    blipp.log(JSON.parse('{"key": "value"}'));
     scene = blipp.addScene();
 
     // Global variables
@@ -34,12 +36,6 @@ try {
     // Scene creation
     scene.onCreate = function() {
 
-        //scene.addText(locationInfo)
-        //  .setFontSize(30)
-        //  .setTextMargins([1, 1])
-        //  //.setBgColor([1, 1, 1, .5])
-        //  .setTranslationX(-800)
-        //  .setTranslationY(300);
         var defaultLight = 
             scene.addLight('light')
                 .setIntensity(0.2);
@@ -51,34 +47,26 @@ try {
             .setLight(defaultLight)
             .setMaterial(defaultMaterial);
 
-        //var poisFile = "pbHistoricLocations.json";
-        //scene.addRequiredAssets(poisFile);
-        //var pois = JSON.parse(blipp.loadJson(poisFile, true));
-
-        //var poi1Name = pois.location[0].poi.name;
-        //var nearbyPoiText = scene.addText(poi1Name)
-        //  .setFontSize(50)
-        //  .setTranslationY(400)
-        //  .setBgColor([1, 0, 0, 0]);
-
         logoPane.onTouchEnd = function() {
             this.setHidden(true);
 
             var locationTitle = blippInfoVariations[blippName].title;
             scene.addText(locationTitle)
               .setFontSize(100)
-              //.setBgColor([1, 1, 1, .5])
               .setTranslationY(450);
 
             var locationInfo = blippInfoVariations[blippName].description;
 
             if (blippName !== "hackathon") {
+                /* The info for non-hackathon blipps is left-aligned. */
                 scene.addText(locationInfo)
                   .setFontSize(40)
                   .setBgColor([1, 1, 1, 0.9])
                   .setLayout( {position:[-0.5, 0], size:[.4, 1]} )
                   .setTextMargins([20, 5]);
             } else {
+                /* The info for the hackathon blipp is centered
+                 * and styled differently. */
                 var infoText = scene
                   .addText(locationInfo)
                   .setFontSize(40)
@@ -89,22 +77,33 @@ try {
             }
 
             if (blippName !== "hackathon") {
+                /* Non-hackathon blipps display point-of-interest (POI)
+                 * info on the right side. */
                 var geo = blipp.getGeo();
                 var lat = geo.getLat();
                 var lng = geo.getLon();
-                //var url = "https://img.buzzfeed.com/buzzfeed-static/static/2013-10/enhanced/webdr06/15/10/anigif_enhanced-buzz-25498-1381845743-9_preview.gif";
+
+                /* Failed attempt to play some audio from IBM's Watson.
+                 * Left in for future efforts to get it working. */
                 //var urlUpToFile = "https://stream.watsonplatform.net/text-to-speech/api/v1/synthesize?accept=audio/wav&text=hello%20mundo";
                 
+
+                /* This is our Scriptr backend. */
                 var urlUpToFile = "https://api.scriptrapps.io/";
                 var file = "test";
 
-                var file = "synthesize";
+                /* More Watson failure */
+                //var file = "synthesize";
+
                 var getParams = "lat=" + lat + "&lng=" + lng;
 
                 var url = urlUpToFile + file + "?" + getParams;
+
+                /* More Watson */
                 //var url = "https://archive.org/download/testmp3testfile/mpthreetest.mp3";
                 //file = "mpthreetest.mp3";
                 //var url = "https://192.168.1.70/alert.png";
+
                 blipp.log('Downloading ' + url + '...')
 
                 var self = this;
@@ -123,6 +122,8 @@ try {
                         if (status == 'OK') {
                             blipp.log('Done!');
 
+                            /* Lots of attempts to play audio
+                             * so we could get Watson working. */
                             //blipp.log("Asset status:");
                             //blipp.log(blipp.getAssetStat(file));
                             //scene.playSound(file);
@@ -139,7 +140,11 @@ try {
                             //scene.prepareSound(localFile, 10);
                             //scene.playSound("", false, 10);
                             scene.playSound(localFile);*/
+                            /* Y U NO PLAY??? :( */
                             
+
+
+
                             var poiResponse = blipp.loadData(file, false);
 
                             blipp.log(JSON.stringify(poiResponse));
@@ -170,21 +175,6 @@ try {
                       }, 
                       headers,
                       true);
-            } else {
-            /*for (var i = 0; i < 3; i++) {
-                scene.addText(poiName + " - " + poiUberCost)
-                  .setFontSize(75)
-                  .setBgColor([1, 1, 1, .5])
-                  .setTranslationX(800 + (10 * poiName.length))
-                  .setTranslationY(250 - (i * 100));
-
-                poiText.onTouchEnd = function() {
-                    this.setTranslationX(800);
-                    this.setText("Calling your uber...");
-                    blipp.log(poi.uberLink);
-                    blipp.openURL(poi.uberLink);
-                };
-            };*/
             }
         }
     }
@@ -194,5 +184,6 @@ try {
         blipp.log("Screen: " + blipp.getScreenWidth() + "*" + blipp.getScreenHeight() + " px");
     }
 } catch (e) {
+    /* Catch and log all the errors, otherwise they just disappear silently */
     blipp.log("Error: " + e.message);
 }
